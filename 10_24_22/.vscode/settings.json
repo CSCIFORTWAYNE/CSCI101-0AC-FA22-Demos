@@ -1,0 +1,12 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/avenable11/CSCI101-0AC-FA22-Demos/10_24_22",
+            "binaryPath": "/home/avenable11/CSCI101-0AC-FA22-Demos/10_24_22/a.out",
+            "binaryArgs": []
+        }
+    ],
+    "files.associations": {
+        "iostream": "cpp"
+    }
+}
