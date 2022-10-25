@@ -3,8 +3,51 @@
 #include <cctype>
 #include <climits>
 #include <string>
+#include <fstream>
 
 using namespace std;
+
+double getDoubleGreaterThan0(string prompt);
+char getUnits();
+long calcualteBytes(double memSize, char unit);
+int secret(int);
+double secret(double);
+void readStudentFromFile(ifstream&, int&, char&);
+
+
+int main()
+{
+    int mar;
+    double memorySize = getDoubleGreaterThan0("Enter the memory size: ");
+    char unit = getUnits();
+    long bytes = calcualteBytes(memorySize, unit);
+
+    cout << "The minimum MAR size for " << bytes << " bytes of memory is " << ceil(log2(bytes)) << " bits." << endl;
+
+    bytes = calcualteBytes(3, 'K');
+    cout << secret(4) << endl;
+    string sentence;
+    cout << "Enter a sentence: ";
+    getline(cin >> ws,sentence);
+    cout << sentence << endl;
+
+    ifstream infile;
+    infile.open("grades.txt");
+    int studentNum;
+    char grade;
+    while (!infile.eof())
+    {
+        readStudentFromFile(infile, studentNum, grade);
+        if(!infile)
+            break;
+        cout << studentNum << " - " << grade << endl;
+    }
+
+    
+
+    return 0;
+
+}
 
 double getDoubleGreaterThan0(string prompt)
 {
@@ -31,6 +74,7 @@ double getDoubleGreaterThan0(string prompt)
     }
     return x;
 }
+
 
 char getUnits()
 {
@@ -75,17 +119,16 @@ long calcualteBytes(double memSize, char unit)
     }
     return bytes;
 }
-
-int main()
+int secret(int x)
 {
-    int mar;
-    double memorySize = getDoubleGreaterThan0("Enter the memory size: ");
-    char unit = getUnits();
-    long bytes = calcualteBytes(memorySize, unit);
+    if (x > 5)
+        return 2 * x;
+    
+    return x;
+}
 
-    cout << "The minimum MAR size for " << bytes << " bytes of memory is " << ceil(log2(bytes)) << " bits." << endl;
 
-    bytes = calcualteBytes(3, 'K');
-
-    return 0;
+void readStudentFromFile(ifstream& in, int& x, char& ch)
+{
+    in >> x >> ch;
 }
