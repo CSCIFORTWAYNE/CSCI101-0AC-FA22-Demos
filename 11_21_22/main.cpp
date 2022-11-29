@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 #include <climits>
+#include <cstdlib>
+
 
 using namespace std;
 
@@ -60,6 +62,9 @@ int getNumPlayers();
 void resetStream();
 colorType inputColor();
 void printPlayerOnBoard(playerListType&, int, string);
+void startGame(playerListType&, deckType&, colorType[]);
+void takeTurn(playerType&, deckType&, colorType[]);
+int drawCard(deckType&);
 
 int main()
 {
@@ -71,6 +76,9 @@ int main()
     generateDeck(theDeck, DECK_SIZE);
     setupPlayers(players);
     printBoard(board, BOARD_SIZE, players);
+    startGame(players,theDeck,board);
+    cout << "Game Over!" << endl;
+
     return 0;
 }
 
@@ -274,4 +282,93 @@ void printPlayerOnBoard(playerListType& pl, int boardSpace, string spaceColor)
             cout << " ";
         }
     }
+}
+
+void startGame(playerListType& pl, deckType& d, colorType b[])
+{
+    bool winner = false;
+    while(!winner)
+    {
+        for(int i = 0; i < pl.numPlayers; i++)
+        {
+            takeTurn(pl.playerList[i], d, b);
+            if(pl.playerList[i].position == BOARD_SIZE -1)
+            {
+                winner = true;
+                cout << pl.playerList[i].name << " has reached the end!" << endl;
+            }
+        }
+        printBoard(b,BOARD_SIZE, pl);
+    }
+}
+
+void takeTurn(playerType& p, deckType& d, colorType b[])
+{
+    string temp;
+    cout << p.name << "'s turn: "<< endl;
+    cout << "Press any key to draw a card.";
+    cin.ignore();
+    cin.get();
+    cardType playerCard = d.deck[drawCard(d)];
+    cout << p.name << " drew a " << printCard(playerCard) << endl;
+    int num = 1;
+    if(playerCard.isDouble)
+    {
+        num = 2;
+    }
+    for(int i = 0; i < num; i++)
+    {
+        for(int j = p.position + 1; j < BOARD_SIZE; j++)
+        {
+            if(playerCard.color == b[j])
+            {
+                p.position = j;
+                break;
+            }
+        }
+    }
+
+}
+
+int drawCard(deckType& d)
+{
+    static ifstream in("gameplay.txt");
+
+    if(d.numUsed == DECK_SIZE)
+    {
+        cout << "All the cards in the deck have been used. Resetting deck." << endl;
+        d.numUsed = 0;
+        for(int i = 0; i < DECK_SIZE; i++)
+        {
+            d.used[i] = false;
+        }
+    }
+    if(!in.is_open())
+    {
+        in.open("gameplay.txt");
+    }
+
+    bool valid = false;
+    int card;
+    while(!valid && !in.eof())
+    {
+        in >> card;
+        if(d.used[card])
+        {
+            continue;
+        }
+        else
+        {
+            valid = true;
+            d.used[card] = true;
+            d.numUsed++;
+        }
+    }
+
+    if(in.eof())
+    {
+        in.close();
+    }
+    return card;
+
 }
